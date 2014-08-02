@@ -13,20 +13,18 @@ var gameStats = {
 }
 
 var gameBoard = d3.select("body").append("svg")
-              .attr({
-                "width" : gameOptions.width,
-                "height": gameOptions.height
-              })
-              .classed("gameBoard", true);
+  .attr({
+    "width" : gameOptions.width,
+    "height": gameOptions.height
+  })
+  .classed("gameBoard", true);
 
 var mario = new Mario(16, 32);
-mario.x = gameOptions.width / 2;
-mario.y = gameOptions.height / 2;
 
 mario.d3SetUp();
 
 var shellColors = ["red", "blue", "green"];
-var shellData = []
+var shellData = [];
 for (var i = 0; i < gameOptions.nEnemies; i++) {
   shellData.push({
     x: Math.random() * gameOptions.width,
@@ -37,13 +35,24 @@ for (var i = 0; i < gameOptions.nEnemies; i++) {
 }
 
 var shells = gameBoard.selectAll("circle")
-              .data(shellData)
-              .enter()
-              .append("circle")
-              .attr({
-                "cx": function(d){return d.x;},
-                "cy": function(d){return d.y;},
-                "r": function(d){return d.r;},
-                "fill": function(d){return d.color;}
-              });
+  .data(shellData)
+  .enter()
+  .append("circle")
+  .attr({
+    "cx": function(d){return d.x;},
+    "cy": function(d){return d.y;},
+    "r": function(d){return d.r;},
+    "fill": function(d){return d.color;}
+  });
 
+var moveShells = function(){
+  d3.selectAll("circle")
+  .transition()
+  .duration(2000)
+  .attr({
+    "cx": function(){return Math.random() * gameOptions.width;},
+    "cy": function(){return Math.random() * gameOptions.height;}
+  })
+};
+
+setInterval(moveShells, 2000);

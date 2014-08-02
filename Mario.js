@@ -1,8 +1,8 @@
 var Mario = function(width, height){
   this.width = width;
   this.height = height;
-  this.x = 0;
-  this.y = 0;
+  this.x = gameOptions.width / 2;
+  this.y = gameOptions.height / 2;
   this.paths = [{
       fill: "#887000",
       d: "M3 4L10 4L14 8L14 10L11 11L11 12L12 12L12 13L13 13L13 14L14 14L14 15L15 15L15 17L16 17L16 20L0 20L0 17L1 17L1 15L2 15L2 14L3 14L3 13L4 13L4 11L3 11L3 10L1 10L1 7L2 7L2 5L3 5M2 28L6 28L6 32L0 32L0 30L2 30M10 28L14 28L14 30L17 30L16 32L10 32"
