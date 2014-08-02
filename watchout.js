@@ -25,6 +25,4 @@ var shells = new Shells();
 mario.d3SetUp();
 shells.d3SetUp();
 
-
-
 setInterval(shells.moveShells, 2000);
