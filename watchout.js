@@ -20,39 +20,11 @@ var gameBoard = d3.select("body").append("svg")
   .classed("gameBoard", true);
 
 var mario = new Mario(16, 32);
+var shells = new Shells();
 
 mario.d3SetUp();
+shells.d3SetUp();
 
-var shellColors = ["red", "blue", "green"];
-var shellData = [];
-for (var i = 0; i < gameOptions.nEnemies; i++) {
-  shellData.push({
-    x: Math.random() * gameOptions.width,
-    y: Math.random() * gameOptions.height,
-    r: mario.width / 2,
-    color: shellColors[Math.floor(Math.random() * 3)]
-  });
-}
 
-var shells = gameBoard.selectAll("circle")
-  .data(shellData)
-  .enter()
-  .append("circle")
-  .attr({
-    "cx": function(d){return d.x;},
-    "cy": function(d){return d.y;},
-    "r": function(d){return d.r;},
-    "fill": function(d){return d.color;}
-  });
 
-var moveShells = function(){
-  d3.selectAll("circle")
-  .transition()
-  .duration(2000)
-  .attr({
-    "cx": function(){return Math.random() * gameOptions.width;},
-    "cy": function(){return Math.random() * gameOptions.height;}
-  })
-};
-
-setInterval(moveShells, 2000);
+setInterval(shells.moveShells, 2000);

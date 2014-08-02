@@ -53,10 +53,3 @@ Mario.prototype.transform = function(x, y) {
     });
 };
 
-Mario.prototype.setUpDragging = function(){
-  // set up dragging
-  // event magic
-  // call transform with current mouse position
-  //
-}
-
