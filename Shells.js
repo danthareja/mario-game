@@ -61,14 +61,18 @@ Shells.prototype.detectCollisions = function(){
     }
   });
 
-  if(prevCollision !== collision){
+  if(collision){
     if (gameStats.currentScore > gameStats.highScore){
       gameStats.highScore = gameStats.currentScore;
     }
     gameStats.currentScore = 0;
-    gameStats.collisions++;
-  }
-    prevCollision = collision;
+
+    if (prevCollision !== collision){
+        gameStats.collisions++;
+      }
+    }
+
+  prevCollision = collision;
 };
 
 Shells.prototype.moveShells = function(){
