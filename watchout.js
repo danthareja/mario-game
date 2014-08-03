@@ -1,3 +1,5 @@
+//TODO add rules & styling
+
 var gameOptions = {
   height: 450,
   width: 700,
@@ -17,7 +19,9 @@ var gameBoard = d3.select("body").append("svg")
     "height": gameOptions.height
   })
   .style({
-    "border" : "5px solid black"
+    "border" : "5px solid black",
+    "display" : "block",
+    "margin" : "auto"
   })
   .classed("gameBoard", true);
 
@@ -30,11 +34,11 @@ var scoreTicker = function() {
   d3.select(".current span").text(gameStats.currentScore);
   d3.select(".high span").text(gameStats.highScore);
 
-  if (gameStats.currentScore === 500) {
+  if (gameStats.currentScore === 1000) {
     shells.moveRedShells();
   }
 
-  if (gameStats.currentScore === 1000) {
+  if (gameStats.currentScore === 1500) {
     shells.moveBlueShells();
   }
 

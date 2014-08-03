@@ -1,3 +1,5 @@
+//TODO fix transform on the edges
+
 var Mario = function(width, height){
   this.marioData = [{width: width, height: height, cssClass: "mario"}];
   this.height = height;
@@ -13,15 +15,10 @@ var Mario = function(width, height){
   this.d3SetUp();
 };
 
+
+// FIX drag from middle
 Mario.prototype.d3SetUp = function(){
-  var that = this;
-  var dragListener = d3.behavior.drag()
-    .origin(function(){
-      return {x: d3.event.x - 16, y: d3.event.y - 86};
-    })
-    .on("drag", function(){
-      that.transform(d3.event.x, d3.event.y);
-    });
+  var context = this;
 
  var mario = gameBoard.selectAll("svg")
   .data(this.marioData)
@@ -30,6 +27,11 @@ Mario.prototype.d3SetUp = function(){
   .attr({
     "class": this.marioData[0].cssClass,
   });
+
+  var dragListener = d3.behavior.drag()
+    .on("drag", function(){
+      context.transform(d3.event.x, d3.event.y);
+    });
 
   d3.selectAll(".mario").selectAll("path")
   .data(this.paths)

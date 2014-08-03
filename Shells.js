@@ -1,3 +1,5 @@
+// TODO fix shell movement to not go past edges of screen
+
 var Shells = function() {
   this.data = [];
   this.shellColors = ["red", "green", "green", "green"];
@@ -79,11 +81,15 @@ Shells.prototype.detectCollisions = function(){
   // Selects all shells and checks for collisions
   d3.selectAll(".green, .red, .blue").each(function(d){
     var element = d3.select(this);
-    var xDiff = (mario.x + 8) - (parseFloat(element.attr("x")) + 12.5);
-    var yDiff = (mario.y + 16) - (parseFloat(element.attr("y")) + 12.5);
-    var distance = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
+    var shellXPos = parseFloat(element.attr("x"));
+    var shellYPos = parseFloat(element.attr("y"));
+    var shellWidth = 25;
+    var shellHeight = 23;
 
-    if (distance < 45) {
+    if (mario.x <  shellXPos + shellWidth &&
+        mario.x + mario.width > shellXPos &&
+        mario.y < shellYPos + shellHeight &&
+        mario.y + mario.height > shellYPos) {
       collision = true;
     }
   });
@@ -93,13 +99,15 @@ Shells.prototype.detectCollisions = function(){
       gameStats.highScore = gameStats.currentScore;
     }
     gameStats.currentScore = 0;
+    gameBoard.style("background-color", "red");
 
     if (this.prevCollision !== collision){
-        gameStats.collisions++;
-        d3.select(".collisions span").text(gameStats.collisions);
-      }
+      gameStats.collisions++;
+      d3.select(".collisions span").text(gameStats.collisions);
     }
-
+  } else {
+    gameBoard.style("background-color", "white");
+  }
   this.prevCollision = collision;
 };
 
@@ -124,8 +132,8 @@ Shells.prototype.moveRedShells = function(){
   };
 
   // Stop moving if score < 1000
-  if (gameStats.currentScore < 500) {
-    d3.selectAll("svg .red").transition().ease("linear").duration(500)
+  if (gameStats.currentScore < 1000) {
+    d3.selectAll("svg .red").transition().duration(500).ease("linear")
     .attr({
       "x": function(d){return randomOutOfBounds("width");},
       "y": function(d){return randomOutOfBounds("height");},
@@ -134,7 +142,7 @@ Shells.prototype.moveRedShells = function(){
   } 
 
   d3.selectAll(".red")
-  .transition().duration(1000)
+  .transition().duration(1500)
   .attr({
     "x": function(){return Math.random() * gameOptions.width;},
     "y": function(){return Math.random() * gameOptions.height;}
@@ -143,18 +151,18 @@ Shells.prototype.moveRedShells = function(){
 };
 
 
-// blue functionality - hunts mario
+// blue functionality - hunts mario @ 1500pts
 Shells.prototype.moveBlueShells = function(){
-  
+
   // Random out of bounds location helper function
   var randomOutOfBounds = function(widthOrHeight) {
     var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
     return arr[Math.floor(Math.random() * 2)]
   };
 
-  // Stop moving if score < 2000
-  if (gameStats.currentScore < 1000) {
-    d3.selectAll("svg .blue").transition().ease("linear").duration(500)
+  // Stop moving if score < 1500
+  if (gameStats.currentScore < 1500) {
+    d3.selectAll("svg .blue").transition().duration(500).ease("linear")
     .attr({
       "x": function(d){return randomOutOfBounds("width");},
       "y": function(d){return randomOutOfBounds("height");},
