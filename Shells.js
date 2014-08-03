@@ -1,4 +1,4 @@
-// TODO fix shell movement to not go past edges of screen
+//TODO clean up random variables --> make functions for them
 
 var Shells = function() {
   this.data = [];
@@ -44,16 +44,16 @@ Shells.prototype.addShells = function() {
   // Add red or green shells got all but one enemy in our d3 data array
   for (var i = 0; i < gameOptions.nEnemies - 1; i++) {
     this.data.push({
-      x: Math.random() * gameOptions.width,
-      y: Math.random() * gameOptions.height,
+      x: Math.random() * gameOptions.width - gameOptions.padding,
+      y: Math.random() * gameOptions.height - gameOptions.padding,
       cssClass: this.shellColors[Math.floor(Math.random() * this.shellColors.length)],
     });
   }
 
   // Add a single blue shell to our d3 data array
   this.data.push({
-    x: Math.random() * gameOptions.width,
-    y: Math.random() * gameOptions.height,
+    x: Math.random() * gameOptions.width - gameOptions.padding,
+    y: Math.random() * gameOptions.height - gameOptions.padding,
     cssClass: "blue"
   });
 };
@@ -125,8 +125,8 @@ Shells.prototype.moveGreenShells = function(){
   d3.selectAll(".green")
   .transition().duration(2000).ease("linear")
   .attr({
-    "x": function(){return Math.random() * gameOptions.width;},
-    "y": function(){return Math.random() * gameOptions.height;},
+    "x": function(){return Math.random() * gameOptions.width - gameOptions.padding;},
+    "y": function(){return Math.random() * gameOptions.height - gameOptions.padding;},
   })
   .each("end", Shells.prototype.moveGreenShells);
 };
@@ -142,7 +142,7 @@ Shells.prototype.moveRedShells = function(){
 
   // Stop moving if score < 1000
   if (gameStats.currentScore < 1000) {
-    d3.selectAll("svg .red").transition().duration(500).ease("linear")
+    d3.selectAll("svg .red")
     .attr({
       "x": function(d){return randomOutOfBounds("width");},
       "y": function(d){return randomOutOfBounds("height");},
@@ -153,8 +153,8 @@ Shells.prototype.moveRedShells = function(){
   d3.selectAll(".red")
   .transition().duration(1500)
   .attr({
-    "x": function(){return Math.random() * gameOptions.width;},
-    "y": function(){return Math.random() * gameOptions.height;}
+    "x": function(){return Math.random() * gameOptions.width - gameOptions.padding;},
+    "y": function(){return Math.random() * gameOptions.height - gameOptions.padding;}
   })
   .each("end", Shells.prototype.moveRedShells);  
 };
@@ -171,7 +171,7 @@ Shells.prototype.moveBlueShells = function(){
 
   // Stop moving if score < 1500
   if (gameStats.currentScore < 1500) {
-    d3.selectAll("svg .blue").transition().duration(500).ease("linear")
+    d3.selectAll("svg .blue") 
     .attr({
       "x": function(d){return randomOutOfBounds("width");},
       "y": function(d){return randomOutOfBounds("height");},
@@ -180,7 +180,7 @@ Shells.prototype.moveBlueShells = function(){
   }
 
   d3.selectAll(".blue")
-  .transition().duration(1000).ease("linear")
+  .transition().duration(1500).ease("linear")
   .attr({
     "x": function(){return mario.x;},
     "y": function(){return mario.y;}

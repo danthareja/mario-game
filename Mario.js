@@ -21,17 +21,19 @@ var Mario = function(width, height){
 Mario.prototype.d3SetUp = function(){
   var context = this;
 
- var mario = gameBoard.selectAll("svg")
-  .data(this.marioData)
-  .enter()
-  .append("svg")
-  .attr({
-    "class": this.marioData[0].cssClass,
-  });
+  var mario = gameBoard.selectAll("svg")
+    .data(this.marioData)
+    .enter()
+    .append("svg")
+    .attr({
+      "class": this.marioData[0].cssClass,
+    });
 
   var dragListener = d3.behavior.drag()
     .on("drag", function(){
-      context.transform(d3.event.x, d3.event.y);
+      context.x += d3.event.dx;
+      context.y += d3.event.dy;
+      context.transform(context.x, context.y);
     });
 
   d3.selectAll(".mario").selectAll("path")
@@ -41,7 +43,7 @@ Mario.prototype.d3SetUp = function(){
   .attr({
       "d": function(d){return d.d;},
       "fill": function(d){return d.fill;},
-      "transform": "translate(" + this.x + "," + this.y + ")"
+      "transform": "translate(" + context.x + "," + context.y + ")"
   })
   .call(dragListener);
 };
@@ -49,10 +51,10 @@ Mario.prototype.d3SetUp = function(){
 // Move mario
 Mario.prototype.transform = function(x, y) {
   // Check if inputs are in bounds
-  x = (x < 8) ? 8 : x;
-  x = (x > gameOptions.width + 8) ? gameOptions.width - 16 : x;
-  y = (y < 8) ? 8 : y;
-  y = (y > gameOptions.height - 32) ? gameOptions.height - 32 : y;
+  x = (x < 0) ? 0 : x;
+  x = (x > gameOptions.width - 26) ? gameOptions.width - 26 : x;
+  y = (y < 0) ? 0 : y;
+  y = (y > gameOptions.height - 42) ? gameOptions.height - 42 : y;
 
   // Move mario
   d3.selectAll(".mario path")
