@@ -1,47 +1,66 @@
 var Shells = function() {
   this.data = [];
-  this.shellColors = ["red", "green", "green"];
+  this.shellColors = ["red", "green", "green", "green"];
+  this.prevCollision = false;
+
   this.greenShellPaths = [];
   this.redShellPaths = [];
   this.blueShellPaths = [];
+
+  // Call initial methods
   this.addShells();
   this.addPaths();
   this.d3SetUp();
 };
 
-Shells.prototype.addShells = function() {
-  for (var i = 0; i < gameOptions.nEnemies; i++) {
-    this.data.push({
-      x: Math.random() * gameOptions.width,
-      y: Math.random() * gameOptions.height,
-      cssClass: this.shellColors[Math.floor(Math.random() * this.shellColors.length)]
-    });
-  }
-  this.data[gameOptions.nEnemies - 1] = {
-    x: Math.random() * gameOptions.width,
-    y: Math.random() * gameOptions.height,
-    cssClass: "blue"
-  };
-};
-
 Shells.prototype.d3SetUp = function() {
+  // Use data array to create svg containers for our shells
+
+  // Set not visible shells off screen
+  var randomOutOfBounds = function(widthOrHeight) {
+    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
+    return arr[Math.floor(Math.random() * 2)]
+  };
+
   var newShells = gameBoard.selectAll("svg")
     .data(this.data)
     .enter()
     .append("svg")
     .attr({
-      "x": function(d){return d.x;},
-      "y": function(d){return d.y;},
-      "class": function(d){return d.cssClass;}
+      "x": function(d){return d.cssClass === "green" ? d.x : randomOutOfBounds("width");},
+      "y": function(d){return d.cssClass === "green" ? d.y : randomOutOfBounds("height");},
+      "class": function(d){return d.cssClass;},
     });
-  for( var i = 0; i < this.shellColors.length; i++ ){
-    this.setPaths(this.shellColors[i]);
+
+  // Add our svg paths to each container given a specified class
+  this.setPaths("red")
+  this.setPaths("green")
+  this.setPaths("blue")
+};
+
+Shells.prototype.addShells = function() {
+  // Add red or green shells got all but one enemy in our d3 data array
+  for (var i = 0; i < gameOptions.nEnemies - 1; i++) {
+    this.data.push({
+      x: Math.random() * gameOptions.width,
+      y: Math.random() * gameOptions.height,
+      cssClass: this.shellColors[Math.floor(Math.random() * this.shellColors.length)],
+    });
   }
-  this.setPaths("blue");
+
+  // Add a single blue shell to our d3 data array
+  this.data.push({
+    x: Math.random() * gameOptions.width,
+    y: Math.random() * gameOptions.height,
+    cssClass: "blue"
+  });
 };
 
 Shells.prototype.setPaths = function(className){
+  // Variable creates our methods name. Note: class names must directly correlate to method names
   var pathSelector = className + "ShellPaths";
+
+  // Adds path elements to proper svg
   d3.selectAll("svg." + className).selectAll("path")
   .data(this[pathSelector])
   .enter()
@@ -53,10 +72,11 @@ Shells.prototype.setPaths = function(className){
   });
 };
 
-var prevCollision = false;
-Shells.prototype.detectCollisions = function(){
 
+Shells.prototype.detectCollisions = function(){
   var collision = false;
+
+  // Selects all shells and checks for collisions
   d3.selectAll(".green, .red, .blue").each(function(d){
     var element = d3.select(this);
     var xDiff = (mario.x + 8) - (parseFloat(element.attr("x")) + 12.5);
@@ -74,51 +94,84 @@ Shells.prototype.detectCollisions = function(){
     }
     gameStats.currentScore = 0;
 
-    if (prevCollision !== collision){
+    if (this.prevCollision !== collision){
         gameStats.collisions++;
+        d3.select(".collisions span").text(gameStats.collisions);
       }
     }
 
-  prevCollision = collision;
+  this.prevCollision = collision;
 };
 
 Shells.prototype.moveGreenShells = function(){
   // green functionality
   d3.selectAll(".green")
-  .transition()
-  .duration(2000)
-  .ease("linear")
+  .transition().duration(2000).ease("linear")
   .attr({
     "x": function(){return Math.random() * gameOptions.width;},
-    "y": function(){return Math.random() * gameOptions.height;}
-  });
-}
+    "y": function(){return Math.random() * gameOptions.height;},
+  })
+  .each("end", Shells.prototype.moveGreenShells);
+};
 
+// red functionality
 Shells.prototype.moveRedShells = function(){
-  // red functionality
+
+  // Random out of bounds location helper function
+  var randomOutOfBounds = function(widthOrHeight) {
+    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
+    return arr[Math.floor(Math.random() * 2)]
+  };
+
+  // Stop moving if score < 1000
+  if (gameStats.currentScore < 500) {
+    d3.selectAll("svg .red").transition().ease("linear").duration(500)
+    .attr({
+      "x": function(d){return randomOutOfBounds("width");},
+      "y": function(d){return randomOutOfBounds("height");},
+    });
+    return true;
+  } 
+
   d3.selectAll(".red")
-  .transition()
-  .duration(1000)
-  .ease("linear")
+  .transition().duration(1000)
   .attr({
     "x": function(){return Math.random() * gameOptions.width;},
     "y": function(){return Math.random() * gameOptions.height;}
-  });
-}
+  })
+  .each("end", Shells.prototype.moveRedShells);  
+};
 
+
+// blue functionality - hunts mario
 Shells.prototype.moveBlueShells = function(){
-  // blue functionality
+  
+  // Random out of bounds location helper function
+  var randomOutOfBounds = function(widthOrHeight) {
+    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
+    return arr[Math.floor(Math.random() * 2)]
+  };
+
+  // Stop moving if score < 2000
+  if (gameStats.currentScore < 1000) {
+    d3.selectAll("svg .blue").transition().ease("linear").duration(500)
+    .attr({
+      "x": function(d){return randomOutOfBounds("width");},
+      "y": function(d){return randomOutOfBounds("height");},
+    });
+    return true;
+  }
+
   d3.selectAll(".blue")
-  .transition()
-  .duration(500)
-  .ease("linear")
+  .transition().duration(1000).ease("linear")
   .attr({
     "x": function(){return mario.x;},
     "y": function(){return mario.y;}
-  });
+  })
+  .each("end", Shells.prototype.moveBlueShells);
 };
 
-// also figure out how to set classes for multiple shells
+// Path properties for various shells' svg
 Shells.prototype.addPaths = function() {
   this.greenShellPaths.push(
     { fill: "#2b9b39", opacity: "0.71", d: " M 10.28 0.00 L 14.75 0.00 L 15.17 0.39 C 13.58 1.19 11.40 1.84 9.89 0.51 L 10.28 0.00 Z" },

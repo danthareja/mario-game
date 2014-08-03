@@ -1,4 +1,3 @@
-// start slingin' some d3 here.
 var gameOptions = {
   height: 450,
   width: 700,
@@ -22,19 +21,34 @@ var gameBoard = d3.select("body").append("svg")
   })
   .classed("gameBoard", true);
 
-var mario = new Mario(16, 32);
+// Create player and enemies
+var mario = new Mario(18, 34);
 var shells = new Shells();
 
-var scoreTicker = function(){
+// Update score
+var scoreTicker = function() {
   d3.select(".current span").text(gameStats.currentScore);
   d3.select(".high span").text(gameStats.highScore);
-  d3.select(".collisions span").text(gameStats.collisions);
-  gameStats.currentScore++;
+
+  if (gameStats.currentScore === 500) {
+    shells.moveRedShells();
+  }
+
+  if (gameStats.currentScore === 1000) {
+    shells.moveBlueShells();
+  }
+
+  gameStats.currentScore += 10;
+  gameStats.highScore = Math.max(gameStats.currentScore, gameStats.highScore);
 }
 
-setInterval(shells.moveGreenShells, 2000);
-setInterval(shells.moveRedShells, 1000);
-setInterval(shells.moveBlueShells, 500);
-setInterval(scoreTicker, 100);
-d3.timer(shells.detectCollisions);
+var playGame = function() {
+  shells.moveGreenShells();
+  d3.timer(shells.detectCollisions);
+  setInterval(scoreTicker, 100);
+}
+
+// Play!
+setTimeout(playGame, 2000);
+
 
