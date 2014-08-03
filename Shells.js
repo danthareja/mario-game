@@ -35,9 +35,9 @@ Shells.prototype.d3SetUp = function() {
     });
 
   // Add our svg paths to each container given a specified class
-  this.setPaths("red")
-  this.setPaths("green")
-  this.setPaths("blue")
+  this.setPaths("red");
+  this.setPaths("green");
+  this.setPaths("blue");
 };
 
 Shells.prototype.addShells = function() {
