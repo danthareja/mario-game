@@ -110,9 +110,11 @@ Shells.prototype.detectCollisions = function(){
       });
 
       gameStats.collisions++;
+      d3.select(".collisions").style("color", "orange");
       d3.select(".collisions span").text(gameStats.collisions);
     }
   } else {
+    d3.select(".collisions").style("color", "black");
     gameBoard.selectAll("image").remove();
   }
   this.prevCollision = collision;

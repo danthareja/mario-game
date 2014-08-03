@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel='stylesheet' type='css' href='bootstrap.css'>
     <link rel='stylesheet' type='css' href='styles.css'>
   </head>
   <body>
-    <div class="scoreboard">
-      <!-- Modify the scoreboard when important events occur in your game! -->
-      <div class="high">High score: <span>0</span></div>
-      <div class="current">Current score: <span>0</span></div>
-      <div class="collisions">Collisions: <span>0</span></div>
+    <div class ="container">
+      <div class="scoreboard">
+        <!-- Modify the scoreboard when important events occur in your game! -->
+        <h3 class="high">High score: <span>0</span></h3>
+        <h3 class="current">Current score: <span>0</span></h3>
+        <h3 class="collisions">Collisions: <span>0</span></h3>
+      </div>
+      <h1>It's a me! Mario!</h1>
+      <h3>Run away from the shells</h3>
+      <h3><a href="http://latentflip.com/LearningD3/collider/">Inspired by Phillip Robert's collider</a></h3>
+      <script src="d3.js" charset="utf-8"></script>
+      <script src='Mario.js'></script>
+      <script src='Shells.js'></script>
+      <script src='watchout.js'></script>
     </div>
-    <script src="d3.js" charset="utf-8"></script>
-    <script src='Mario.js'></script>
-    <script src='Shells.js'></script>
-    <script src='watchout.js'></script>
   </body>
 </html>

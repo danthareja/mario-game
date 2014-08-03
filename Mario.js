@@ -1,4 +1,5 @@
 //TODO fix transform on the edges
+// Fix drag from middls
 
 var Mario = function(width, height){
   this.marioData = [{width: width, height: height, cssClass: "mario"}];

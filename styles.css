@@ -1,0 +1,25 @@
+.scoreboard {
+  height: 100px;
+  width: 250px;
+  text-align: right;
+  float: right;
+  padding: 10px
+}
+
+/*.high span:first-child{
+  width: 50px;
+}
+
+.current span:first-child{
+  width: 50px;
+}
+
+.collisions span:first-child{
+  width: 50px;
+}
+*/
+
+.gameBoard {
+  display: block;
+  margin: auto;
+}

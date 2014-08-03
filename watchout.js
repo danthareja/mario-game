@@ -13,7 +13,7 @@ var gameStats = {
   collisions: 0
 }
 
-var gameBoard = d3.select("body").append("svg")
+var gameBoard = d3.select(".container").append("svg")
   .attr({
     "width" : gameOptions.width,
     "height": gameOptions.height,
