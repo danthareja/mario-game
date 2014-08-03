@@ -16,7 +16,7 @@ var gameStats = {
 var gameBoard = d3.select("body").append("svg")
   .attr({
     "width" : gameOptions.width,
-    "height": gameOptions.height
+    "height": gameOptions.height,
   })
   .style({
     "border" : "5px solid black",

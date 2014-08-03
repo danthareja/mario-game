@@ -99,14 +99,21 @@ Shells.prototype.detectCollisions = function(){
       gameStats.highScore = gameStats.currentScore;
     }
     gameStats.currentScore = 0;
-    gameBoard.style("background-color", "red");
 
     if (this.prevCollision !== collision){
+      gameBoard.insert("image", ":first-child");
+      gameBoard.selectAll("image").attr({
+        "xlink:href": "img/bowser.png",
+        "width": gameOptions.width,
+        "height": gameOptions.height,
+        "opacity": 0.10
+      });
+
       gameStats.collisions++;
       d3.select(".collisions span").text(gameStats.collisions);
     }
   } else {
-    gameBoard.style("background-color", "white");
+    gameBoard.selectAll("image").remove();
   }
   this.prevCollision = collision;
 };
