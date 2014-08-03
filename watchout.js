@@ -3,8 +3,10 @@
 var gameOptions = {
   height: 450,
   width: 700,
-  nEnemies: 20,
-  padding: 20
+  nEnemies: 25,
+  padding: 20,
+  redShellScore: 1000,
+  blueShellScore: 2000
 }
 
 var gameStats = {
@@ -34,14 +36,19 @@ var scoreTicker = function() {
   d3.select(".current span").text(gameStats.currentScore);
   d3.select(".high span").text(gameStats.highScore);
 
-  if (gameStats.currentScore === 1000) {
-    shells.moveRedShells();
+  // Once game hits proper score, activate red shells
+  if (gameStats.currentScore === gameOptions.redShellScore) {
+    shells.initializeRedShells();
+    setTimeout(shells.moveRedShells.bind(shells), 2000);
   }
 
-  if (gameStats.currentScore === 1500) {
-    shells.moveBlueShells();
+  // Once game hits proper score, activate red shells
+  if (gameStats.currentScore === gameOptions.blueShellScore) {
+    shells.initializeBlueShells();
+    setTimeout(shells.moveBlueShells.bind(shells), 2000);
   }
 
+  // Increment score
   gameStats.currentScore += 10;
   gameStats.highScore = Math.max(gameStats.currentScore, gameStats.highScore);
 }
@@ -53,6 +60,7 @@ var playGame = function() {
 }
 
 // Play!
+shells.initializeGreenShells();
 setTimeout(playGame, 2000);
 
 

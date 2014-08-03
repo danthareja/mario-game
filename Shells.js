@@ -1,8 +1,9 @@
 //TODO clean up random variables --> make functions for them
+// make shells spawn instead of fly in. openinng transition and repeat transition. select shells based on score
 
 var Shells = function() {
   this.data = [];
-  this.shellColors = ["red", "green", "green", "green"];
+  this.shellColors = ["red", "green", "green"];
   this.prevCollision = false;
 
   this.greenShellPaths = [];
@@ -19,19 +20,20 @@ Shells.prototype.d3SetUp = function() {
   // Use data array to create svg containers for our shells
 
   // Set not visible shells off screen
-  var randomOutOfBounds = function(widthOrHeight) {
-    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
-    return arr[Math.floor(Math.random() * 2)]
-  };
+  // var randomOutOfBounds = function(widthOrHeight) {
+  //   var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
+  //   return arr[Math.floor(Math.random() * 2)]
+  // };
 
   var newShells = gameBoard.selectAll("svg")
     .data(this.data)
     .enter()
     .append("svg")
     .attr({
-      "x": function(d){return d.cssClass === "green" ? d.x : randomOutOfBounds("width");},
-      "y": function(d){return d.cssClass === "green" ? d.y : randomOutOfBounds("height");},
+      "x": function(d){return Math.random() * gameOptions.width},
+      "y": function(d){return Math.random() * gameOptions.height},
       "class": function(d){return d.cssClass;},
+      "opacity": "0",
     });
 
   // Add our svg paths to each container given a specified class
@@ -44,16 +46,16 @@ Shells.prototype.addShells = function() {
   // Add red or green shells got all but one enemy in our d3 data array
   for (var i = 0; i < gameOptions.nEnemies - 1; i++) {
     this.data.push({
-      x: Math.random() * gameOptions.width - gameOptions.padding,
-      y: Math.random() * gameOptions.height - gameOptions.padding,
+      x: Math.random() * gameOptions.width,
+      y: Math.random() * gameOptions.height,
       cssClass: this.shellColors[Math.floor(Math.random() * this.shellColors.length)],
     });
   }
 
   // Add a single blue shell to our d3 data array
   this.data.push({
-    x: Math.random() * gameOptions.width - gameOptions.padding,
-    y: Math.random() * gameOptions.height - gameOptions.padding,
+    x: Math.random() * gameOptions.width,
+    y: Math.random() * gameOptions.height,
     cssClass: "blue"
   });
 };
@@ -77,9 +79,17 @@ Shells.prototype.setPaths = function(className){
 
 Shells.prototype.detectCollisions = function(){
   var collision = false;
+  var activeShells = d3.selectAll(".green");
 
-  // Selects all shells and checks for collisions
-  d3.selectAll(".green, .red, .blue").each(function(d){
+  if (gameStats.currentScore > gameOptions.redShellScore && gameStats.currentScore < gameOptions.blueShellScore) {
+    activeShells = d3.selectAll(".green, .red");
+  }
+  if (gameStats.currentScore >= gameOptions.blueShellScore) {
+    activeShells = d3.selectAll(".green, .red, .blue");
+  }
+
+  // Selects all activeShells and checks for collisions
+  activeShells.each(function(d){
     var element = d3.select(this);
     var shellXPos = parseFloat(element.attr("x"));
     var shellYPos = parseFloat(element.attr("y"));
@@ -120,67 +130,84 @@ Shells.prototype.detectCollisions = function(){
   this.prevCollision = collision;
 };
 
-Shells.prototype.moveGreenShells = function(){
-  // green functionality
+
+Shells.prototype.initializeGreenShells = function() {
   d3.selectAll(".green")
-  .transition().duration(2000).ease("linear")
+  .transition().duration(1000).attr({
+    "opacity" : "1",
+  });
+};
+
+Shells.prototype.initializeRedShells = function() {
+  d3.selectAll(".red")
+  .transition().duration(1000).attr({
+    "opacity" : "1",
+  });
+};
+
+Shells.prototype.initializeBlueShells = function() {
+  d3.selectAll(".blue")
+  .transition().duration(1000).attr({
+    "opacity" : "1",
+  });
+};
+
+Shells.prototype.moveGreenShells = function(){
+  d3.selectAll(".green")
+  .transition().duration(1500).ease("linear")
   .attr({
-    "x": function(){return Math.random() * gameOptions.width - gameOptions.padding;},
-    "y": function(){return Math.random() * gameOptions.height - gameOptions.padding;},
+    "x": function(){return Math.random() * gameOptions.width;},
+    "y": function(){return Math.random() * gameOptions.height;},
   })
   .each("end", Shells.prototype.moveGreenShells);
 };
 
-// red functionality
+// red functionality - faster 
 Shells.prototype.moveRedShells = function(){
-
-  // Random out of bounds location helper function
-  var randomOutOfBounds = function(widthOrHeight) {
-    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
-    return arr[Math.floor(Math.random() * 2)]
-  };
-
-  // Stop moving if score < 1000
-  if (gameStats.currentScore < 1000) {
-    d3.selectAll("svg .red")
+  // Check if current score is lower than red shell threshold
+  if (gameStats.currentScore < gameOptions.redShellScore) {
+    // fade out & relocate
+    d3.selectAll("svg .red").transition().duration(500).ease("linear")
     .attr({
-      "x": function(d){return randomOutOfBounds("width");},
-      "y": function(d){return randomOutOfBounds("height");},
+      "opacity": 0,
+      "x": function(){return Math.random() * gameOptions.width;},
+      "y": function(){return Math.random() * gameOptions.height;}
     });
+
+    // stop moving
     return true;
   } 
 
+  // Move red shells to random position
   d3.selectAll(".red")
-  .transition().duration(1500)
+  .transition().duration(1000)
   .attr({
-    "x": function(){return Math.random() * gameOptions.width - gameOptions.padding;},
-    "y": function(){return Math.random() * gameOptions.height - gameOptions.padding;}
+    "x": function(){return Math.random() * gameOptions.width;},
+    "y": function(){return Math.random() * gameOptions.height;}
   })
   .each("end", Shells.prototype.moveRedShells);  
 };
 
 
-// blue functionality - hunts mario @ 1500pts
+// blue functionality - hunts mario
 Shells.prototype.moveBlueShells = function(){
-
-  // Random out of bounds location helper function
-  var randomOutOfBounds = function(widthOrHeight) {
-    var arr = [Math.random() * gameOptions[widthOrHeight] + gameOptions[widthOrHeight], Math.random() * gameOptions[widthOrHeight] - gameOptions[widthOrHeight]]
-    return arr[Math.floor(Math.random() * 2)]
-  };
-
-  // Stop moving if score < 1500
-  if (gameStats.currentScore < 1500) {
-    d3.selectAll("svg .blue") 
+  // Check if current score is lower than blue shell threshold
+  if (gameStats.currentScore < gameOptions.blueShellScore) {
+    // Fade out
+    d3.selectAll("svg .blue").transition().duration(500).ease("linear") 
     .attr({
-      "x": function(d){return randomOutOfBounds("width");},
-      "y": function(d){return randomOutOfBounds("height");},
+      "opacity": 0,
+      "x": function(){return Math.random() * gameOptions.width;},
+      "y": function(){return Math.random() * gameOptions.height;}
     });
+
+    //stop moving
     return true;
   }
 
+  // Move blue shells to random position
   d3.selectAll(".blue")
-  .transition().duration(1500).ease("linear")
+  .transition().duration(1000).ease("linear")
   .attr({
     "x": function(){return mario.x;},
     "y": function(){return mario.y;}
