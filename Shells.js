@@ -6,7 +6,8 @@ var Shells = function() {
   this.blueShellPaths = [];
   this.addShells();
   this.addPaths();
-}
+  this.d3SetUp();
+};
 
 Shells.prototype.addShells = function() {
   for (var i = 0; i < gameOptions.nEnemies; i++) {
@@ -28,11 +29,9 @@ Shells.prototype.d3SetUp = function() {
       "y": function(d){return d.y;},
       "class": function(d){return d.cssClass;}
     });
-    for( var i = 0; i < this.shellColors.length; i++ ){
-      this.setPaths(this.shellColors[i]);
-    }
-
-
+  for( var i = 0; i < this.shellColors.length; i++ ){
+    this.setPaths(this.shellColors[i]);
+  }
 };
 
 Shells.prototype.setPaths = function(className){
@@ -45,6 +44,31 @@ Shells.prototype.setPaths = function(className){
     "d": function(d){return d.d;},
     "fill": function(d){return d.fill;},
   });
+};
+
+var prevCollision = false;
+Shells.prototype.detectCollisions = function(){
+
+  var collision = false;
+  d3.selectAll(".green, .red, .blue").each(function(d){
+    var element = d3.select(this);
+    var xDiff = (mario.x + 8) - (parseFloat(element.attr("x")) + 12.5);
+    var yDiff = (mario.y + 16) - (parseFloat(element.attr("y")) + 12.5);
+    var distance = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
+
+    if (distance < 45) {
+      collision = true;
+    }
+  });
+
+  if(prevCollision !== collision){
+    if (gameStats.currentScore > gameStats.highScore){
+      gameStats.highScore = gameStats.currentScore;
+    }
+    gameStats.currentScore = 0;
+    gameStats.collisions++;
+  }
+    prevCollision = collision;
 };
 
 Shells.prototype.moveShells = function(){
@@ -95,4 +119,4 @@ Shells.prototype.addPaths = function() {
   );
 
 
-}
+};

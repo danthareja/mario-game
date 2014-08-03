@@ -22,7 +22,14 @@ var gameBoard = d3.select("body").append("svg")
 var mario = new Mario(16, 32);
 var shells = new Shells();
 
-mario.d3SetUp();
-shells.d3SetUp();
+var scoreTicker = function(){
+  d3.select(".current span").text(gameStats.currentScore);
+  d3.select(".high span").text(gameStats.highScore);
+  d3.select(".collisions span").text(gameStats.collisions);
+  gameStats.currentScore++;
+}
 
 setInterval(shells.moveShells, 2000);
+setInterval(scoreTicker, 100);
+d3.timer(shells.detectCollisions);
+
