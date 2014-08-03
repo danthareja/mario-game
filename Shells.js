@@ -1,6 +1,6 @@
 var Shells = function() {
   this.data = [];
-  this.shellColors = ["red", "blue", "green"];
+  this.shellColors = ["red", "green", "green"];
   this.greenShellPaths = [];
   this.redShellPaths = [];
   this.blueShellPaths = [];
@@ -17,6 +17,11 @@ Shells.prototype.addShells = function() {
       cssClass: this.shellColors[Math.floor(Math.random() * this.shellColors.length)]
     });
   }
+  this.data[gameOptions.nEnemies - 1] = {
+    x: Math.random() * gameOptions.width,
+    y: Math.random() * gameOptions.height,
+    cssClass: "blue"
+  };
 };
 
 Shells.prototype.d3SetUp = function() {
@@ -32,6 +37,7 @@ Shells.prototype.d3SetUp = function() {
   for( var i = 0; i < this.shellColors.length; i++ ){
     this.setPaths(this.shellColors[i]);
   }
+  this.setPaths("blue");
 };
 
 Shells.prototype.setPaths = function(className){
@@ -75,13 +81,39 @@ Shells.prototype.detectCollisions = function(){
   prevCollision = collision;
 };
 
-Shells.prototype.moveShells = function(){
-  d3.selectAll(".green, .red, .blue")
+Shells.prototype.moveGreenShells = function(){
+  // green functionality
+  d3.selectAll(".green")
   .transition()
   .duration(2000)
+  .ease("linear")
   .attr({
-    "x": function(d){return Math.random() * gameOptions.width;},
-    "y": function(d){return Math.random() * gameOptions.height;}
+    "x": function(){return Math.random() * gameOptions.width;},
+    "y": function(){return Math.random() * gameOptions.height;}
+  });
+}
+
+Shells.prototype.moveRedShells = function(){
+  // red functionality
+  d3.selectAll(".red")
+  .transition()
+  .duration(1000)
+  .ease("linear")
+  .attr({
+    "x": function(){return Math.random() * gameOptions.width;},
+    "y": function(){return Math.random() * gameOptions.height;}
+  });
+}
+
+Shells.prototype.moveBlueShells = function(){
+  // blue functionality
+  d3.selectAll(".blue")
+  .transition()
+  .duration(500)
+  .ease("linear")
+  .attr({
+    "x": function(){return mario.x;},
+    "y": function(){return mario.y;}
   });
 };
 

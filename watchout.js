@@ -2,7 +2,7 @@
 var gameOptions = {
   height: 450,
   width: 700,
-  nEnemies: 30,
+  nEnemies: 20,
   padding: 20
 }
 
@@ -17,6 +17,9 @@ var gameBoard = d3.select("body").append("svg")
     "width" : gameOptions.width,
     "height": gameOptions.height
   })
+  .style({
+    "border" : "5px solid black"
+  })
   .classed("gameBoard", true);
 
 var mario = new Mario(16, 32);
@@ -29,7 +32,9 @@ var scoreTicker = function(){
   gameStats.currentScore++;
 }
 
-setInterval(shells.moveShells, 2000);
+setInterval(shells.moveGreenShells, 2000);
+setInterval(shells.moveRedShells, 1000);
+setInterval(shells.moveBlueShells, 500);
 setInterval(scoreTicker, 100);
 d3.timer(shells.detectCollisions);
 
