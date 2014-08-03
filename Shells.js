@@ -81,10 +81,10 @@ Shells.prototype.detectCollisions = function(){
   var collision = false;
   var activeShells = d3.selectAll(".green");
 
-  if (gameStats.currentScore > gameOptions.redShellScore && gameStats.currentScore < gameOptions.blueShellScore) {
+  if (gameStats.currentScore > gameOptions.redShellScore + 200 && gameStats.currentScore < gameOptions.blueShellScore + 200) {
     activeShells = d3.selectAll(".green, .red");
   }
-  if (gameStats.currentScore >= gameOptions.blueShellScore) {
+  if (gameStats.currentScore >= gameOptions.blueShellScore + 200) {
     activeShells = d3.selectAll(".green, .red, .blue");
   }
 
@@ -105,11 +105,7 @@ Shells.prototype.detectCollisions = function(){
   });
 
   if(collision){
-    if (gameStats.currentScore > gameStats.highScore){
-      gameStats.highScore = gameStats.currentScore;
-    }
     gameStats.currentScore = 0;
-
     if (this.prevCollision !== collision){
       gameBoard.insert("image", ":first-child");
       gameBoard.selectAll("image").attr({
@@ -167,7 +163,7 @@ Shells.prototype.moveRedShells = function(){
   // Check if current score is lower than red shell threshold
   if (gameStats.currentScore < gameOptions.redShellScore) {
     // fade out & relocate
-    d3.selectAll("svg .red").transition().duration(500).ease("linear")
+    d3.selectAll("svg .red").transition().duration(250).ease("linear")
     .attr({
       "opacity": 0,
       "x": function(){return Math.random() * gameOptions.width;},
@@ -194,7 +190,7 @@ Shells.prototype.moveBlueShells = function(){
   // Check if current score is lower than blue shell threshold
   if (gameStats.currentScore < gameOptions.blueShellScore) {
     // Fade out
-    d3.selectAll("svg .blue").transition().duration(500).ease("linear") 
+    d3.selectAll("svg .blue").transition().duration(250).ease("linear") 
     .attr({
       "opacity": 0,
       "x": function(){return Math.random() * gameOptions.width;},
