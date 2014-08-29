@@ -31,9 +31,11 @@ Mario.prototype.d3SetUp = function(){
 
   var dragListener = d3.behavior.drag()
     .on("drag", function(){
-      context.x += d3.event.dx;
-      context.y += d3.event.dy;
-      context.transform(context.x, context.y);
+      if (!(d3.event.x < 0 || d3.event.x > gameOptions.width || d3.event.y < 0 || d3.event.y > gameOptions.height )){
+        context.x += d3.event.dx;
+        context.y += d3.event.dy;
+        context.transform(context.x, context.y);
+      }
     });
 
   d3.selectAll(".mario").selectAll("path")
